@@ -1,0 +1,1 @@
+# Swoogan.Resource
