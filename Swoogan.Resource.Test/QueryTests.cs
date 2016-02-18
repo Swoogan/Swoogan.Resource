@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 
 namespace Swoogan.Resource.Test
@@ -42,11 +43,12 @@ namespace Swoogan.Resource.Test
             );
 
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
+            client.SetupSet(c => c.BaseUrl = It.IsAny<Uri>()).Verifiable();
 
             var res = new Resource("http://localhost/wak", client.Object, requester.Object);
             var result = res.Query<Customer>(new Dictionary<string, object> { { "LastName", "Svingen" } });
 
-            Assert.AreEqual("http://localhost/wak?LastName=Svingen", val);
+            client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));
         }
 
         [TestMethod]
@@ -55,18 +57,16 @@ namespace Swoogan.Resource.Test
             var client = new Mock<IRestClient>();
             var response = new Mock<IRestResponse<List<Customer>>>();
             var requester = new Mock<IRequester>();
-
-            string val = string.Empty;
-            requester.Setup(r => r.NewRequest(It.IsAny<string>())).Returns<string>(
-                s => { val = s; return new RestRequest(s); }
-            );
+            
+            requester.Setup(r => r.NewRequest()).Returns(new RestRequest());
 
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
+            client.SetupSet(c => c.BaseUrl = It.IsAny<Uri>()).Verifiable();
 
             var res = new Resource("http://localhost/wak", client.Object, requester.Object);
             var result = res.Query<Customer>(new { LastName = "Svingen" });
 
-            Assert.AreEqual("http://localhost/wak?LastName=Svingen", val);
+            client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));
         }
 
  

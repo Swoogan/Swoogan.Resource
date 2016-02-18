@@ -98,7 +98,15 @@ namespace Swoogan.Resource
         public IRestResponse Create(object data = null, object parameters = null)
         {
             var request = _requester.NewRequest(Method.POST);
-            request.AddJsonBody(data);
+
+            if (data != null)
+            {
+                request.AddJsonBody(data);                
+            }
+            else
+            {
+                request.RequestFormat = DataFormat.Json;
+            }
 
             var builder = new UrlBuilder();
             _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));

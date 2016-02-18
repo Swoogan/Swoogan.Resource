@@ -8,7 +8,7 @@ namespace Swoogan.Resource.Test
     public class GetTests
     {
         [TestMethod]
-        public void Type_dGet()
+        public void Typed_Get()
         {
             var client = new Mock<IRestClient>();
             var response = new Mock<IRestResponse<Customer>>();
