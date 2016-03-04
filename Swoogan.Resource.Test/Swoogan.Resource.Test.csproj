@@ -70,12 +70,6 @@
     <Compile Include="UrlBuilderTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Swoogan.Resources\Swoogan.Resource.csproj">
-      <Project>{783f8cb1-07a4-43c8-b6b6-3461a6564697}</Project>
-      <Name>Swoogan.Resource</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>
