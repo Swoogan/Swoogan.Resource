@@ -3,11 +3,13 @@
 
 A client REST library for .NET with an API that models Angular's ngResource
 
-### Installing
+## Installing
 
 NuGet package will be available soon.
 
-### Example Use
+## Example Use
+
+# Full Program w/ GET
 
 	class Program
 	{
@@ -15,14 +17,14 @@ NuGet package will be available soon.
 		{
 			var resource = new Resource("http://workstation:8090/api");
 
-			dynamic result = resource.Get();
-			System.Console.WriteLine(result.cup.Name);
-			System.Console.WriteLine(result.saucer.Name);
+			dynamic products = resource.Get();
+			System.Console.WriteLine(products.cup.Name);
+			System.Console.WriteLine(products.saucer.Name);
 			System.Console.WriteLine();
 
-			var result2 = resource.Get<Product>();
-			System.Console.WriteLine(result2.Cup.Name);
-			System.Console.WriteLine(result2.Saucer.Name);
+			var products2 = resource.Get<Product>();
+			System.Console.WriteLine(products2.Cup.Name);
+			System.Console.WriteLine(products2.Saucer.Name);
 
 			System.Console.ReadKey();
 		}
@@ -39,5 +41,20 @@ NuGet package will be available soon.
 			public decimal Price { get; set; }
 		}
 	}
+	
+## POST
 
+	var resource = new Resource("http://workstation:8090/products");
+	
+	object product = new { Name = "Cup", Price = 3.99m };
+	resouce.Create(product); 	// PATCH
+
+## PATCH
+	var resource = new Resource("http://workstation:8090/products");
+
+	dynamic product = resource.Get(1);
+	product.Price = 3.99m;
+	resouce.Update(product); 	// PATCH
+	
+	
 		
