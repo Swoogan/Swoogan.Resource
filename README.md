@@ -50,9 +50,9 @@ NuGet package will be available soon.
 	resouce.Create(product); 	// POST
 
 ## PATCH
-	var resource = new Resource("http://localhost:8090/products");
+	var resource = new Resource("http://localhost:8090/products/:id");
 
-	dynamic product = resource.Get(1);
+	dynamic product = resource.Get(new { id: 1 });
 	product.Price = 3.99m;
 	resouce.Update(product); 	// PATCH
 	
