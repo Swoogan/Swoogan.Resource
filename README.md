@@ -15,7 +15,7 @@ NuGet package will be available soon.
 	{
 		static void Main(string[] args)
 		{
-			var resource = new Resource("http://workstation:8090/api");
+			var resource = new Resource("http://localhost:8090/api");
 
 			dynamic products = resource.Get();
 			System.Console.WriteLine(products.cup.Name);
@@ -44,13 +44,13 @@ NuGet package will be available soon.
 	
 ## POST
 
-	var resource = new Resource("http://workstation:8090/products");
+	var resource = new Resource("http://localhost:8090/products");
 	
 	object product = new { Name = "Cup", Price = 3.99m };
-	resouce.Create(product); 	// PATCH
+	resouce.Create(product); 	// POST
 
 ## PATCH
-	var resource = new Resource("http://workstation:8090/products");
+	var resource = new Resource("http://localhost:8090/products");
 
 	dynamic product = resource.Get(1);
 	product.Price = 3.99m;

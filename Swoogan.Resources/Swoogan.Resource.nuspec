@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Swoogan.Resource</id>
+    <version>$version$</version>
+    <authors>Colin Svingen</authors>
+    <description>A client REST library for .NET with an API that models Angular's ngResource</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/Swoogan/Swoogan.Resource</projectUrl>
+    <licenseUrl>https://github.com/Swoogan/Swoogan.Resource/blob/master/LICENSE</licenseUrl>
+    <dependencies>
+      <package id="RestSharp" version="105.2.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Debug\*.dll" target="lib\net45" /> 
+  </files>
+</package>
