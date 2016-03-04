@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/Swoogan/Swoogan.Resource</projectUrl>
     <licenseUrl>https://github.com/Swoogan/Swoogan.Resource/blob/master/LICENSE</licenseUrl>
     <dependencies>
-      <package id="RestSharp" version="105.2.3" />
+      <dependency id="RestSharp" version="105.2.3" />
     </dependencies>
   </metadata>
   <files>
