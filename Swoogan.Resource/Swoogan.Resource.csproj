@@ -46,10 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IRequester.cs" />
+    <Compile Include="IResource.cs" />
     <Compile Include="MalformedUrlException.cs" />
     <Compile Include="Requester.cs" />
     <Compile Include="Resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticResource.cs" />
     <Compile Include="UrlBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

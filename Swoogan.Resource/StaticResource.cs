@@ -4,26 +4,25 @@ using System.Collections.Generic;
 
 namespace Swoogan.Resource
 {
-    // args go into url if param present, query string otherwise
-    public class Resource : IResource
+    public class StaticResource<T> where T : class, new()
     {
         private readonly string _url;
         private readonly IRestClient _client;
         private readonly IRequester _requester;
         private readonly List<string> _urlParameters = new List<string>();
 
-        public Resource(string url) : this(url, new RestClient())
+        public StaticResource(string url) : this(url, new RestClient())
         {
             if (url == null) throw new ArgumentNullException("url");
         }
 
-        public Resource(string url, IRestClient client) : this(url, client, new Requester())
+        public StaticResource(string url, IRestClient client) : this(url, client, new Requester())
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
         }
 
-        public Resource(string url, IRestClient client, IRequester requester)
+        public StaticResource(string url, IRestClient client, IRequester requester)
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
@@ -34,24 +33,7 @@ namespace Swoogan.Resource
             _url = url;
         }
 
-        public List<object> Query(object parameters = null)
-        {
-            // client.Authenticator = new HttpBasicAuthenticator("username", "password");
-            var request = _requester.NewRequest();
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute(request);
-            
-
-            var obj = SimpleJson.DeserializeObject(response.Content);
-            
-            var result = new List<object>();
-            return result;
-        }
-
-        public List<T> Query<T>(Dictionary<string, object> parameters) where T : class
+        public List<T> Query(Dictionary<string, object> parameters)
         {
             var request = _requester.NewRequest();
 
@@ -62,7 +44,7 @@ namespace Swoogan.Resource
             return response.Data;
         }
 
-        public List<T> Query<T>(object parameters = null) where T : class
+        public List<T> Query(object parameters = null)
         {
             var request = _requester.NewRequest();
 
@@ -73,18 +55,7 @@ namespace Swoogan.Resource
             return response.Data;
         }
 
-        public object Get(object parameters = null)
-        {
-            var request = _requester.NewRequest();
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute(request);
-            return SimpleJson.DeserializeObject(response.Content);
-        }
-
-        public T Get<T>(object parameters = null) where T : class, new()
+        public T Get(object parameters = null)
         {
             var request = _requester.NewRequest();
 
@@ -95,13 +66,13 @@ namespace Swoogan.Resource
             return response.Data;
         }
 
-        public IRestResponse Create(object data = null, object parameters = null)
+        public IRestResponse Create(T data = null, object parameters = null)
         {
             var request = _requester.NewRequest(Method.POST);
 
             if (data != null)
             {
-                request.AddJsonBody(data);                
+                request.AddJsonBody(data);
             }
             else
             {
@@ -115,7 +86,7 @@ namespace Swoogan.Resource
             return response;
         }
 
-        public IRestResponse Update(object data = null, object parameters = null)
+        public IRestResponse Update(T data = null, object parameters = null)
         {
             var request = _requester.NewRequest(Method.PATCH);
             request.AddJsonBody(data);
@@ -127,7 +98,7 @@ namespace Swoogan.Resource
             return response;
         }
 
-        public IRestResponse Replace(object data = null, object parameters = null)
+        public IRestResponse Replace(T data = null, object parameters = null)
         {
             var request = _requester.NewRequest(Method.PUT);
             request.AddJsonBody(data);
@@ -139,7 +110,7 @@ namespace Swoogan.Resource
             return _client.Execute(request);
         }
 
-        public IRestResponse Remove(object parameters = null, object data = null)
+        public IRestResponse Remove(T parameters = null, object data = null)
         {
             var request = _requester.NewRequest(Method.DELETE);
             request.AddJsonBody(data);
