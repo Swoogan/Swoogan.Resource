@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Swoogan.Resource
 {
-    public class StaticResource<T> where T : class, new()
+    public class StaticResource<T> : IStaticResource<T> where T : class, new()
     {
         private readonly Resource _resource;
         private readonly List<string> _urlParameters = new List<string>();

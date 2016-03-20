@@ -5,7 +5,9 @@ A client REST library for .NET with an API that models Angular's ngResource
 
 ## Installing
 
-NuGet package will be available soon.
+Install via Nuget:
+
+    PM> Install-Package Swoogan.Resource
 
 ## Example Use
 

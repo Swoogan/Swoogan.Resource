@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="IRequester.cs" />
     <Compile Include="IResource.cs" />
+    <Compile Include="IStaticResource.cs" />
     <Compile Include="MalformedUrlException.cs" />
     <Compile Include="Requester.cs" />
     <Compile Include="Resource.cs" />
