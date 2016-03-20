@@ -6,9 +6,7 @@ namespace Swoogan.Resource
 {
     public class StaticResource<T> where T : class, new()
     {
-        private readonly string _url;
-        private readonly IRestClient _client;
-        private readonly IRequester _requester;
+        private readonly Resource _resource;
         private readonly List<string> _urlParameters = new List<string>();
 
         public StaticResource(string url) : this(url, new RestClient())
@@ -28,98 +26,42 @@ namespace Swoogan.Resource
             if (client == null) throw new ArgumentNullException("client");
             if (requester == null) throw new ArgumentNullException("requester");
 
-            _client = client;
-            _requester = requester;
-            _url = url;
+            _resource = new Resource(url, client, requester);
         }
 
         public List<T> Query(Dictionary<string, object> parameters)
         {
-            var request = _requester.NewRequest();
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute<List<T>>(request);
-            return response.Data;
+            return _resource.Query<T>(parameters);
         }
 
         public List<T> Query(object parameters = null)
         {
-            var request = _requester.NewRequest();
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute<List<T>>(request);
-            return response.Data;
+            return _resource.Query<T>(parameters);
         }
 
         public T Get(object parameters = null)
         {
-            var request = _requester.NewRequest();
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute<T>(request);
-            return response.Data;
+            return _resource.Get<T>(parameters);
         }
 
         public IRestResponse Create(T data = null, object parameters = null)
         {
-            var request = _requester.NewRequest(Method.POST);
-
-            if (data != null)
-            {
-                request.AddJsonBody(data);
-            }
-            else
-            {
-                request.RequestFormat = DataFormat.Json;
-            }
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute(request);
-            return response;
+            return _resource.Create(data, parameters);
         }
 
         public IRestResponse Update(T data = null, object parameters = null)
         {
-            var request = _requester.NewRequest(Method.PATCH);
-            request.AddJsonBody(data);
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            var response = _client.Execute(request);
-            return response;
+            return _resource.Update(data, parameters);
         }
 
         public IRestResponse Replace(T data = null, object parameters = null)
         {
-            var request = _requester.NewRequest(Method.PUT);
-            request.AddJsonBody(data);
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            request.AddJsonBody(data);
-            return _client.Execute(request);
+            return _resource.Replace(data, parameters);
         }
 
         public IRestResponse Remove(T parameters = null, object data = null)
         {
-            var request = _requester.NewRequest(Method.DELETE);
-            request.AddJsonBody(data);
-
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
-
-            request.AddJsonBody(data);
-            return _client.Execute(request);
+            return _resource.Remove(data, parameters);
         }
     }
 }

@@ -44,7 +44,6 @@ namespace Swoogan.Resource
 
             var response = _client.Execute(request);
             
-
             var obj = SimpleJson.DeserializeObject(response.Content);
             
             var result = new List<object>();
