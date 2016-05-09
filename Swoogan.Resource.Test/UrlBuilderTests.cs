@@ -1,11 +1,20 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using Swoogan.Resource.Url;
 
 namespace Swoogan.Resource.Test
 {
     [TestClass]
     public class UrlBuilderTests
     {
+        [TestMethod]
+        public void Basic_Url()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("http://localhost:9000", null);
+            Assert.AreEqual("http://localhost:9000", url);
+        }
+
         [TestMethod]
         public void Object_Params()
         {
@@ -23,11 +32,35 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_Params()
+        public void Null_One_Params()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:userId", null);
+            Assert.AreEqual("/wak/", url);
+        }
+
+        [TestMethod]
+        public void Null_Two_Params()
         {
             var builder = new UrlBuilder();
             var url = builder.BuildUrl("/wak/:userId/:orderId", null);
-            Assert.AreEqual("/wak/:userId/:orderId", url);
+            Assert.AreEqual("/wak/", url);
+        }
+
+        [TestMethod]
+        public void Null_Two_Dotted_Params()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:userId.foo/:orderId.bar", null);
+            Assert.AreEqual("/wak/.foo/.bar", url);
+        }
+
+        [TestMethod]
+        public void Three_Parameters_With_Two_Arguments()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:a/:b/:c", new { a = 1, c = 3 });
+            Assert.AreEqual("/wak/1/3", url);
         }
 
         [TestMethod]

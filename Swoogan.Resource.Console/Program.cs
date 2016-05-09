@@ -1,33 +1,33 @@
-﻿namespace Swoogan.Resource.Console
+﻿using System;
+
+namespace Swoogan.Resource.Console
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var resource = new Resource("http://workstation:8090/api");
+            var resource = new StaticResource<BranchResource>("http://localhost:9000/api/v1/branch");
 
-            dynamic result = resource.Get();
-            System.Console.WriteLine(result.aol.Name);
-            System.Console.WriteLine(result.fow.Name);
-            System.Console.WriteLine();
+            var results = resource.Query();
 
-            var result2 = resource.Get<Buynext>();
-            System.Console.WriteLine(result2.Aol.Name);
-            System.Console.WriteLine(result2.Fow.Name);
+            if (results == null)
+                throw new Exception();
+            //System.Console.WriteLine(result.aol.Name);
+            //System.Console.WriteLine(result.fow.Name);
+            //System.Console.WriteLine();
+
+            //var result2 = resource.Get<Buynext>();
+            //System.Console.WriteLine(result2.Aol.Name);
+            //System.Console.WriteLine(result2.Fow.Name);
 
             System.Console.ReadKey();
         }
     }
 
-    class Buynext
+    public class BranchResource
     {
-        public Land Aol { get; set; }
-        public Land Fow { get; set; }
-    }
-
-    public class Land
-    {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public decimal Price { get; set; }
+        public string Alias { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using System;
 using System.Collections.Generic;
+using Swoogan.Resource.Url;
 
 namespace Swoogan.Resource
 {
@@ -88,7 +89,8 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest();
 
             var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            var uriString = builder.BuildUrl(_url, parameters);
+            _client.BaseUrl = new Uri(uriString);
 
             var response = _client.Execute<T>(request);
             return response.Data;
