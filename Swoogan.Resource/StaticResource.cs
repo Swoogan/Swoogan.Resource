@@ -9,24 +9,41 @@ namespace Swoogan.Resource
         private readonly Resource _resource;
         private readonly List<string> _urlParameters = new List<string>();
 
-        public StaticResource(string url) : this(url, new RestClient())
+        /// <summary>
+        /// Create a resource that uses the same object type for all actions
+        /// </summary>
+        /// <param name="url">
+        /// Url template for the resource
+        /// eg: http://localhost:8000/api/customer/:id
+        /// where `:id` indicates a parameter token that will be 
+        /// replaced with a value on the action methods
+        /// </param>
+        /// <param name="defaultParams">
+        /// Default value for any of parameters in the url template.
+        /// Values prefaced with an @ will be drawn from the resource object
+        /// <code>
+        /// var resource = new StaticResource<Customer>("http://localhost:8000/api/customer/:id", new { id: "@Id" });
+        /// resource.Update(new Customer { Id: 1, Name = "Colin" });
+        /// </code>
+        /// </param>
+        public StaticResource(string url, object defaultParams = null) : this(url, defaultParams, new RestClient())
         {
             if (url == null) throw new ArgumentNullException("url");
         }
 
-        public StaticResource(string url, IRestClient client) : this(url, client, new Requester())
+        public StaticResource(string url, object defaultParams, IRestClient client) : this(url, defaultParams, client, new Requester())
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
         }
 
-        public StaticResource(string url, IRestClient client, IRequester requester)
+        public StaticResource(string url, object defaultParams, IRestClient client, IRequester requester)
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
             if (requester == null) throw new ArgumentNullException("requester");
 
-            _resource = new Resource(url, client, requester);
+            _resource = new Resource(url, defaultParams, client, requester);
         }
 
         public List<T> Query(Dictionary<string, object> parameters)

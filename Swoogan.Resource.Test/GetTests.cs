@@ -17,7 +17,7 @@ namespace Swoogan.Resource.Test
             response.Setup(r => r.Data).Returns(customer);
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
-            var res = new Resource("http://localhost/wak", client.Object);
+            var res = new Resource("http://localhost/wak", null, client.Object);
             var result = res.Get<Customer>();
 
             Assert.AreEqual(customer, result);

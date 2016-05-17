@@ -24,7 +24,7 @@ namespace Swoogan.Resource.Test
             response.Setup(r => r.Data).Returns(customers);
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
-            var res = new Resource("http://localhost/wak", client.Object);
+            var res = new Resource("http://localhost/wak", null, client.Object);
             var result = res.Query<Customer>();
 
             CollectionAssert.AreEqual(customers, result);
@@ -45,7 +45,7 @@ namespace Swoogan.Resource.Test
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
             client.SetupSet(c => c.BaseUrl = It.IsAny<Uri>()).Verifiable();
 
-            var res = new Resource("http://localhost/wak", client.Object, requester.Object);
+            var res = new Resource("http://localhost/wak", null, client.Object, requester.Object);
             var result = res.Query<Customer>(new Dictionary<string, object> { { "LastName", "Svingen" } });
 
             client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));
@@ -63,7 +63,7 @@ namespace Swoogan.Resource.Test
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
             client.SetupSet(c => c.BaseUrl = It.IsAny<Uri>()).Verifiable();
 
-            var res = new Resource("http://localhost/wak", client.Object, requester.Object);
+            var res = new Resource("http://localhost/wak", null, client.Object, requester.Object);
             var result = res.Query<Customer>(new { LastName = "Svingen" });
 
             client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));

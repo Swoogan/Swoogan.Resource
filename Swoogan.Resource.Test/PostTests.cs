@@ -23,7 +23,7 @@ namespace Swoogan.Resource.Test
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(new RestResponse<Customer>());
 
             var customer = new Customer { Id = 1, FirstName = "Colin", LastName = "Svingen" };
-            var res = new Resource("http://localhost/customer", client.Object, requester.Object);
+            var res = new Resource("http://localhost/customer", null, client.Object, requester.Object);
             var response = res.Create(customer);
 
             Assert.AreEqual(DataFormat.Json, request.RequestFormat);
@@ -50,7 +50,7 @@ namespace Swoogan.Resource.Test
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(new RestResponse<Customer>());
 
             var customer = new Customer { Id = 1, FirstName = "Colin", LastName = "Svingen" };
-            var res = new Resource("http://localhost/customer", client.Object, requester.Object);
+            var res = new Resource("http://localhost/customer", null, client.Object, requester.Object);
             var response = res.Create(customer);
 
             Assert.AreEqual(Method.POST, request.Method);
@@ -77,7 +77,7 @@ namespace Swoogan.Resource.Test
 
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(new RestResponse<Customer>());
 
-            var res = new Resource("http://localhost/customer", client.Object, requester.Object);
+            var res = new Resource("http://localhost/customer", null, client.Object, requester.Object);
             var response = res.Create();
 
             Assert.AreEqual(Method.POST, request.Method);

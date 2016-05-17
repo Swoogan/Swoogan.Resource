@@ -9,28 +9,30 @@ namespace Swoogan.Resource
     public class Resource : IResource
     {
         private readonly string _url;
+        private readonly object _defaultParams;
         private readonly IRestClient _client;
         private readonly IRequester _requester;
         private readonly List<string> _urlParameters = new List<string>();
 
-        public Resource(string url) : this(url, new RestClient())
+        public Resource(string url, object defaultParams = null) : this(url, defaultParams, new RestClient())
         {
             if (url == null) throw new ArgumentNullException("url");
         }
 
-        public Resource(string url, IRestClient client) : this(url, client, new Requester())
+        public Resource(string url, object defaultParams, IRestClient client) : this(url, defaultParams, client, new Requester())
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
         }
 
-        public Resource(string url, IRestClient client, IRequester requester)
+        public Resource(string url, object defaultParams, IRestClient client, IRequester requester)
         {
             if (url == null) throw new ArgumentNullException("url");
             if (client == null) throw new ArgumentNullException("client");
             if (requester == null) throw new ArgumentNullException("requester");
 
             _client = client;
+            _defaultParams = defaultParams;
             _requester = requester;
             _url = url;
         }
