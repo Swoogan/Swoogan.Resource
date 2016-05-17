@@ -59,9 +59,9 @@ namespace Swoogan.Resource
             return _resource.Replace(data, parameters);
         }
 
-        public IRestResponse Remove(T parameters = null, object data = null)
+        public IRestResponse Remove(object parameters = null, T data = null)
         {
-            return _resource.Remove(data, parameters);
+            return _resource.Remove(parameters, data);
         }
     }
 }
