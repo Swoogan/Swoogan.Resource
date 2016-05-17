@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RestSharp.Extensions.MonoHttp;
+using Params = System.Collections.Generic.IReadOnlyDictionary<string, object>;
 
 namespace Swoogan.Resource.Url
 {
@@ -18,24 +19,15 @@ namespace Swoogan.Resource.Url
         /// with the name of the url template parameter
         /// </param>
         /// <returns>Final url</returns>
-        public string BuildUrl(string url, object paramObject, object defaultParams = null)
+        public string BuildUrl(string url, object paramObject, object defaultParamsObject = null)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
 
-            Dictionary<string, object> parameters;
+            var parameters = ObjectToDictionary(paramObject);
+            var defaultParams = ObjectToDictionary(defaultParamsObject);
 
-            if (paramObject != null)
-            {
-                var properties = paramObject.GetType().GetProperties().Where(p => p.CanRead);
-                parameters = properties.ToDictionary(x => x.Name, y => y.GetValue(paramObject));
-            }
-            else
-            {
-                parameters = new Dictionary<string, object>();
-            }
-
-            return AssembleUrl(url, parameters);
+            return AssembleUrl(url, parameters, defaultParams);
         }
 
         /// <summary>
@@ -51,10 +43,10 @@ namespace Swoogan.Resource.Url
         {
             return string.IsNullOrWhiteSpace(url)
                 ? string.Empty
-                : AssembleUrl(url, parameters ?? new Dictionary<string, object>());
+                : AssembleUrl(url, parameters ?? new Dictionary<string, object>(), ObjectToDictionary(defaultParams));
         }
 
-        private string AssembleUrl(string url, IReadOnlyDictionary<string, object> parameters)
+        private string AssembleUrl(string url, Params parameters, Params defaultParams)
         {
             var lexer = new Lexer();
             lexer.Lex(url);
@@ -62,15 +54,32 @@ namespace Swoogan.Resource.Url
             _usedParams.Clear();
 
             var assembledUrl = lexer.Tokens.Aggregate("",
-                (current, token) => current + AssembledUrl(parameters, token, current));
+                (current, token) => current + AssembledUrl(parameters, defaultParams, token, current));
 
             return Cleanup(assembledUrl) + BuildQueryString(parameters, _usedParams);
         }
 
-        private string AssembledUrl(IReadOnlyDictionary<string, object> parameters, Token token, string assembledUrl)
+        private string AssembledUrl(Params parameters, Params defaultParams, Token token, string assembledUrl)
         {
-            var val = EvaluateToken(token, parameters);
+            var val = EvaluateToken(token, parameters, defaultParams);
             return val == "/" && assembledUrl.EndsWith("/") ? "" : val;
+        }
+
+        private static Dictionary<string, object> ObjectToDictionary(object paramObject)
+        {
+            Dictionary<string, object> parameters;
+
+            if (paramObject != null)
+            {
+                var properties = paramObject.GetType().GetProperties().Where(p => p.CanRead);
+                parameters = properties.ToDictionary(x => x.Name, y => y.GetValue(paramObject));
+            }
+            else
+            {
+                parameters = new Dictionary<string, object>();
+            }
+
+            return parameters;
         }
 
         private static string Cleanup(string url)
@@ -78,7 +87,7 @@ namespace Swoogan.Resource.Url
             return url.Replace(@"\:", ":");
         }
 
-        private string EvaluateToken(Token token, IReadOnlyDictionary<string, object> parameters)
+        private string EvaluateToken(Token token, Params parameters, Params defaultParams)
         {
             switch (token.Type)
             {
@@ -86,7 +95,10 @@ namespace Swoogan.Resource.Url
                     return token.Value;
                 case TokenType.Parameter:
                     object paramValue;
-                    if (!parameters.TryGetValue(token.Value, out paramValue)) return "";
+                    if (!parameters.TryGetValue(token.Value, out paramValue))
+                        if (!defaultParams.TryGetValue(token.Value, out paramValue))
+                            return "";
+                        
                     _usedParams.Add(token.Value);
                     return HttpUtility.UrlEncode(paramValue.ToString());
                 default:
