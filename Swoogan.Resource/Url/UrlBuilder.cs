@@ -18,7 +18,7 @@ namespace Swoogan.Resource.Url
         /// with the name of the url template parameter
         /// </param>
         /// <returns>Final url</returns>
-        public string BuildUrl(string url, object paramObject)
+        public string BuildUrl(string url, object paramObject, object defaultParams = null)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
@@ -47,7 +47,7 @@ namespace Swoogan.Resource.Url
         /// where the key matches the name of the url template parameter
         /// </param>
         /// <returns>Final url</returns>
-        public string BuildUrl(string url, Dictionary<string, object> parameters)
+        public string BuildUrl(string url, Dictionary<string, object> parameters, object defaultParams = null)
         {
             return string.IsNullOrWhiteSpace(url)
                 ? string.Empty

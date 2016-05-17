@@ -64,6 +64,14 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
+        public void Double_Token()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:a:b", new { a = 1, b = 3 });
+            Assert.AreEqual("/wak/13", url);
+        }
+
+        [TestMethod]
         public void Null_Url()
         {
             var builder = new UrlBuilder();
@@ -93,6 +101,46 @@ namespace Swoogan.Resource.Test
             var builder = new UrlBuilder();
             var url = builder.BuildUrl("/wak/:orderId", new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } });
             Assert.AreEqual("/wak/2?userId=1", url);
+        }
+
+        [TestMethod]
+        public void Object_DefaultParams_Null()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak", new { userId = 1, orderId = 2 }, null);
+            Assert.AreEqual("/wak?userId=1&orderId=2", url);
+        }
+
+        [TestMethod]
+        public void Object_DefaultParams_Static()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:userId/:orderId", new { userId = 1 }, new { orderId = 2 });
+            Assert.AreEqual("/wak/1/2", url);
+        }
+
+        [TestMethod]
+        public void Object_DefaultParams_From_Object()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:userId", new { Id = 1 }, new { userId = "@Id" });
+            Assert.AreEqual("/wak/1", url);
+        }
+
+        [TestMethod]
+        public void Object_DefaultParams_Dont_Override()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak/:userId/:orderId", new { userId = 1, orderId = 2 }, new { orderId = 3 });
+            Assert.AreEqual("/wak/1/2", url);
+        }
+
+        [TestMethod]
+        public void Dictionary_DefaultParams_Null()
+        {
+            var builder = new UrlBuilder();
+            var url = builder.BuildUrl("/wak", new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
+            Assert.AreEqual("/wak?userId=1&orderId=2", url);
         }
     }
 }
