@@ -75,7 +75,7 @@ namespace Swoogan.Resource.Url
         public string BuildUrl(object paramObject)
         {
             var parameters = ObjectToDictionary(paramObject);
-            return AssembleUrl(parameters, _defaultParams);
+            return AssembleUrl(parameters);
         }
 
         /// <summary>
@@ -88,22 +88,22 @@ namespace Swoogan.Resource.Url
         /// <returns>Final url</returns>
         public string BuildUrl(Dictionary<string, object> parameters)
         {
-            return AssembleUrl(parameters ?? new Dictionary<string, object>(), _defaultParams);
+            return AssembleUrl(parameters ?? new Dictionary<string, object>());
         }
 
-        private string AssembleUrl(Params parameters, Params defaultParams)
+        private string AssembleUrl(Params parameters)
         {
             _usedParams.Clear();
 
             var assembledUrl = _urlTokens.Aggregate("",
-                (current, token) => current + AssembledUrl(parameters, defaultParams, token, current));
+                (current, token) => current + AssembledUrl(parameters, token, current));
 
             return Cleanup(assembledUrl) + BuildQueryString(parameters, _usedParams);
         }
 
-        private string AssembledUrl(Params parameters, Params defaultParams, Token token, string assembledUrl)
+        private string AssembledUrl(Params parameters, Token token, string assembledUrl)
         {
-            var val = EvaluateToken(token, parameters, defaultParams);
+            var val = EvaluateToken(token, parameters);
             return val == "/" && assembledUrl.EndsWith("/") ? "" : val;
         }
 
@@ -121,7 +121,7 @@ namespace Swoogan.Resource.Url
             return url.Replace(@"\:", ":");
         }
 
-        private string EvaluateToken(Token token, Params parameters, Params defaultParams)
+        private string EvaluateToken(Token token, Params parameters)
         {
             switch (token.Type)
             {
@@ -135,7 +135,7 @@ namespace Swoogan.Resource.Url
                         return HttpUtility.UrlEncode(paramValue.ToString());
                     }
 
-                    if (!defaultParams.TryGetValue(token.Value, out paramValue))
+                    if (!_defaultParams.TryGetValue(token.Value, out paramValue))
                         return "";
 
                     if (paramValue is string)
