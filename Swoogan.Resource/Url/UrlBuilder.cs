@@ -95,9 +95,18 @@ namespace Swoogan.Resource.Url
                     return token.Value;
                 case TokenType.Parameter:
                     object paramValue;
-                    if (!parameters.TryGetValue(token.Value, out paramValue))
-                        if (!defaultParams.TryGetValue(token.Value, out paramValue))
-                            return "";
+                    if (parameters.TryGetValue(token.Value, out paramValue))
+                        return HttpUtility.UrlEncode(paramValue.ToString());
+
+                    if (!defaultParams.TryGetValue(token.Value, out paramValue))
+                        return "";
+
+                    if (paramValue is string)
+                    {
+                        var val = paramValue.ToString();
+                        if (val.StartsWith("@"))
+                            return HttpUtility.UrlEncode(val);
+                    }
                         
                     _usedParams.Add(token.Value);
                     return HttpUtility.UrlEncode(paramValue.ToString());
