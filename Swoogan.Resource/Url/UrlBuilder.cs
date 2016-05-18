@@ -130,7 +130,10 @@ namespace Swoogan.Resource.Url
                 case TokenType.Parameter:
                     object paramValue;
                     if (parameters.TryGetValue(token.Value, out paramValue))
+                    {
+                        _usedParams.Add(token.Value);
                         return HttpUtility.UrlEncode(paramValue.ToString());
+                    }
 
                     if (!defaultParams.TryGetValue(token.Value, out paramValue))
                         return "";
