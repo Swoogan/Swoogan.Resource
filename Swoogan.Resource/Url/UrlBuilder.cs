@@ -9,51 +9,93 @@ namespace Swoogan.Resource.Url
     public class UrlBuilder
     {
         private readonly List<string> _usedParams = new List<string>();
+        private readonly Params _defaultParams;
+        private readonly List<Token> _urlTokens;
+
+        /// <summary>
+        /// Create a UrlBuilder
+        /// </summary>
+        /// <param name="urlTemplate">Url template to build urls from</param>
+        /// <param name="defaultParams">
+        /// An object that contains the default values for 
+        /// parameters in the Url template
+        /// </param>
+        public UrlBuilder(string urlTemplate, object defaultParams = null)
+        {
+            var lexer = new Lexer();
+            lexer.Lex(urlTemplate);
+
+            _urlTokens = lexer.Tokens;
+            _defaultParams = ObjectToDictionary(defaultParams);
+        }
+
+
+        /// <summary>
+        /// Create a UrlBuilder
+        /// </summary>
+        /// <param name="urlTemplate">Url template to build urls from</param>
+        /// <param name="defaultParams">
+        /// A dictionary containing the default values for 
+        /// parameters in the Url template
+        /// </param>
+        public UrlBuilder(string urlTemplate, Params defaultParams)
+        {
+            if (string.IsNullOrWhiteSpace(urlTemplate))
+                throw new ArgumentException("Invalid url template", "urlTemplate");
+
+            var lexer = new Lexer();
+            lexer.Lex(urlTemplate);
+
+            _urlTokens = lexer.Tokens;
+            _defaultParams = defaultParams;
+        }
+
+
+        /// <summary>
+        /// Converts the parameter object to a dictionary and adds
+        /// the values of any default parameters that have static values
+        /// </summary>
+        public Params AugmentParameters(object paramObject = null)
+        {
+            var parameters = ObjectToDictionary(paramObject);
+            foreach (var pair in _defaultParams.Where(x => !parameters.ContainsKey(x.Key)))
+                parameters[pair.Key] = pair.Value;
+
+            return parameters;
+        }
 
         /// <summary>
         /// Do parameter substitution in a URL
         /// </summary>
-        /// <param name="url">Template url to subsutitue values in</param>
         /// <param name="paramObject">
         /// Replace the template parameters with the properties on the object
         /// with the name of the url template parameter
         /// </param>
         /// <returns>Final url</returns>
-        public string BuildUrl(string url, object paramObject, object defaultParamsObject = null)
+        public string BuildUrl(object paramObject)
         {
-            if (string.IsNullOrWhiteSpace(url))
-                return string.Empty;
-
             var parameters = ObjectToDictionary(paramObject);
-            var defaultParams = ObjectToDictionary(defaultParamsObject);
-
-            return AssembleUrl(url, parameters, defaultParams);
+            return AssembleUrl(parameters, _defaultParams);
         }
 
         /// <summary>
         /// Do parameter substitution in a URL
         /// </summary>
-        /// <param name="url">Template url to subsutitue values in</param>
         /// <param name="parameters">
         /// Replace the template parameters with the value from the dictionary
         /// where the key matches the name of the url template parameter
         /// </param>
         /// <returns>Final url</returns>
-        public string BuildUrl(string url, Dictionary<string, object> parameters, object defaultParams = null)
+        public string BuildUrl(Dictionary<string, object> parameters)
         {
-            return string.IsNullOrWhiteSpace(url)
-                ? string.Empty
-                : AssembleUrl(url, parameters ?? new Dictionary<string, object>(), ObjectToDictionary(defaultParams));
+            return AssembleUrl(parameters ?? new Dictionary<string, object>(), _defaultParams);
         }
 
-        private string AssembleUrl(string url, Params parameters, Params defaultParams)
+        private string AssembleUrl(Params parameters, Params defaultParams)
         {
-            var lexer = new Lexer();
-            lexer.Lex(url);
-
             _usedParams.Clear();
 
-            var assembledUrl = lexer.Tokens.Aggregate("",
+            var assembledUrl = _urlTokens.Aggregate("",
                 (current, token) => current + AssembledUrl(parameters, defaultParams, token, current));
 
             return Cleanup(assembledUrl) + BuildQueryString(parameters, _usedParams);
@@ -67,19 +109,11 @@ namespace Swoogan.Resource.Url
 
         private static Dictionary<string, object> ObjectToDictionary(object paramObject)
         {
-            Dictionary<string, object> parameters;
+            if (paramObject == null)
+                return new Dictionary<string, object>();
 
-            if (paramObject != null)
-            {
-                var properties = paramObject.GetType().GetProperties().Where(p => p.CanRead);
-                parameters = properties.ToDictionary(x => x.Name, y => y.GetValue(paramObject));
-            }
-            else
-            {
-                parameters = new Dictionary<string, object>();
-            }
-
-            return parameters;
+            var properties = paramObject.GetType().GetProperties().Where(p => p.CanRead);
+            return properties.ToDictionary(x => x.Name, y => y.GetValue(paramObject));
         }
 
         private static string Cleanup(string url)
@@ -143,6 +177,5 @@ namespace Swoogan.Resource.Url
                 "=",
                 HttpUtility.UrlEncode(param.Value.ToString()));
         }
-
     }
 }

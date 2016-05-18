@@ -62,7 +62,7 @@ namespace Swoogan.Resource.Url
         /// </summary>
         public char? Next()
         {
-            if (_pos >= _input.Length)
+            if (_input == null || _pos >= _input.Length)
                 return null;
 
             return _input[_pos++];

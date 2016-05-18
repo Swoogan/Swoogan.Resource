@@ -12,7 +12,7 @@ namespace Swoogan.Resource
         private readonly object _defaultParams;
         private readonly IRestClient _client;
         private readonly IRequester _requester;
-        private readonly List<string> _urlParameters = new List<string>();
+        private readonly UrlBuilder _builder;
 
         public Resource(string url, object defaultParams = null) : this(url, defaultParams, new RestClient())
         {
@@ -35,30 +35,31 @@ namespace Swoogan.Resource
             _defaultParams = defaultParams;
             _requester = requester;
             _url = url;
+
+            _builder = new UrlBuilder(url, defaultParams);
         }
 
-        public List<object> Query(object parameters = null)
-        {
-            // client.Authenticator = new HttpBasicAuthenticator("username", "password");
-            var request = _requester.NewRequest();
+        //public List<object> Query(object parameters = null)
+        //{
+        //    // client.Authenticator = new HttpBasicAuthenticator("username", "password");
+        //    var request = _requester.NewRequest();
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+        //    var builder = new UrlBuilder();
+        //    _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
 
-            var response = _client.Execute(request);
+        //    var response = _client.Execute(request);
             
-            var obj = SimpleJson.DeserializeObject(response.Content);
+        //    var obj = SimpleJson.DeserializeObject(response.Content);
             
-            var result = new List<object>();
-            return result;
-        }
+        //    var result = new List<object>();
+        //    return result;
+        //}
 
         public List<T> Query<T>(Dictionary<string, object> parameters) where T : class
         {
             var request = _requester.NewRequest();
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute<List<T>>(request);
             return response.Data;
@@ -68,8 +69,7 @@ namespace Swoogan.Resource
         {
             var request = _requester.NewRequest();
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute<List<T>>(request);
             return response.Data;
@@ -79,8 +79,7 @@ namespace Swoogan.Resource
         {
             var request = _requester.NewRequest();
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute(request);
             return SimpleJson.DeserializeObject(response.Content);
@@ -90,8 +89,7 @@ namespace Swoogan.Resource
         {
             var request = _requester.NewRequest();
 
-            var builder = new UrlBuilder();
-            var uriString = builder.BuildUrl(_url, parameters);
+            var uriString = _builder.BuildUrl(parameters);
             _client.BaseUrl = new Uri(uriString);
 
             var response = _client.Execute<T>(request);
@@ -104,15 +102,16 @@ namespace Swoogan.Resource
 
             if (data != null)
             {
-                request.AddJsonBody(data);                
+                request.AddJsonBody(data);
             }
             else
             {
                 request.RequestFormat = DataFormat.Json;
             }
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            var @params = _builder.AugmentParameters(parameters);
+            var url = _builder.BuildUrl(parameters);
+            _client.BaseUrl = new Uri(url);
 
             var response = _client.Execute(request);
             return response;
@@ -123,8 +122,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.PATCH);
             request.AddJsonBody(data);
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute(request);
             return response;
@@ -135,8 +133,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.PUT);
             request.AddJsonBody(data);
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             request.AddJsonBody(data);
             return _client.Execute(request);
@@ -147,8 +144,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.DELETE);
             request.AddJsonBody(data);
 
-            var builder = new UrlBuilder();
-            _client.BaseUrl = new Uri(builder.BuildUrl(_url, parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             request.AddJsonBody(data);
             return _client.Execute(request);

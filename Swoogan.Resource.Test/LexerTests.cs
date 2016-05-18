@@ -16,6 +16,16 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
+        public void Null()
+        {
+            var lexer = new Lexer();
+            lexer.Lex(null);
+
+            Assert.AreEqual(0, lexer.Tokens.Count);
+        }
+
+
+        [TestMethod]
         public void Simple()
         {
             var lexer = new Lexer();
