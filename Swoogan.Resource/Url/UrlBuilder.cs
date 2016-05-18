@@ -2,31 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using RestSharp.Extensions.MonoHttp;
-using Params = System.Collections.Generic.IReadOnlyDictionary<string, object>;
+using Params = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Swoogan.Resource.Url
 {
     public class UrlBuilder
     {
         private readonly List<string> _usedParams = new List<string>();
-        private readonly Params _defaultParams;
+        private readonly Params _defaultValues;
         private readonly List<Token> _urlTokens;
 
         /// <summary>
         /// Create a UrlBuilder
         /// </summary>
         /// <param name="urlTemplate">Url template to build urls from</param>
-        /// <param name="defaultParams">
+        /// <param name="defaultValues">
         /// An object that contains the default values for 
         /// parameters in the Url template
         /// </param>
-        public UrlBuilder(string urlTemplate, object defaultParams = null)
+        public UrlBuilder(string urlTemplate, object defaultValues = null)
         {
             var lexer = new Lexer();
             lexer.Lex(urlTemplate);
 
             _urlTokens = lexer.Tokens;
-            _defaultParams = ObjectToDictionary(defaultParams);
+            _defaultValues = ObjectToDictionary(defaultValues);
         }
 
 
@@ -34,11 +34,11 @@ namespace Swoogan.Resource.Url
         /// Create a UrlBuilder
         /// </summary>
         /// <param name="urlTemplate">Url template to build urls from</param>
-        /// <param name="defaultParams">
+        /// <param name="defaultValues">
         /// A dictionary containing the default values for 
         /// parameters in the Url template
         /// </param>
-        public UrlBuilder(string urlTemplate, Params defaultParams)
+        public UrlBuilder(string urlTemplate, Params defaultValues)
         {
             if (string.IsNullOrWhiteSpace(urlTemplate))
                 throw new ArgumentException("Invalid url template", "urlTemplate");
@@ -47,21 +47,42 @@ namespace Swoogan.Resource.Url
             lexer.Lex(urlTemplate);
 
             _urlTokens = lexer.Tokens;
-            _defaultParams = defaultParams;
+            _defaultValues = defaultValues;
         }
 
 
-        /// <summary>
-        /// Converts the parameter object to a dictionary and adds
-        /// the values of any default parameters that have static values
-        /// </summary>
-        public Params AugmentParameters(object paramObject = null)
+        private Params AugmentParameters(Params arguments, object dataObject = null)
         {
-            var parameters = ObjectToDictionary(paramObject);
-            foreach (var pair in _defaultParams.Where(x => !parameters.ContainsKey(x.Key)))
-                parameters[pair.Key] = pair.Value;
+            if (_defaultValues == null) return arguments;
 
-            return parameters;
+            if (arguments == null)
+                arguments = new Params();
+
+            foreach (var pair in _defaultValues.Where(x => !arguments.ContainsKey(x.Key)))
+                arguments[pair.Key] = pair.Value;
+
+            var data = ObjectToDictionary(dataObject);
+            var @params = _urlTokens.Where(x => x.Type == TokenType.Parameter).Select(x => x.Value).ToList();
+
+            // Find all the default parameter values that start with '@'.
+            // Those are replaced with property values from the dataObject. 
+            // If there is a parameter in the url template replace it with
+            // the value from the dataObject as specified by the _defaultValues
+            var names = from defParam in _defaultValues
+                let propValue = defParam.Value.ToString()
+                let paramName = propValue.TrimStart('@')
+                where propValue.StartsWith("@") && @params.Contains(paramName)
+                where data.ContainsKey(paramName)
+                select paramName;
+
+            foreach (var name in names)
+                arguments[name] = data[name];
+
+            //object val;
+            //if (data.TryGetValue(paramName, out val))
+            //    arguments[paramName] = val;
+
+            return arguments;
         }
 
         /// <summary>
@@ -71,10 +92,11 @@ namespace Swoogan.Resource.Url
         /// Replace the template parameters with the properties on the object
         /// with the name of the url template parameter
         /// </param>
+        /// <param name="dataObject"></param>
         /// <returns>Final url</returns>
-        public string BuildUrl(object paramObject)
+        public string BuildUrl(object paramObject, object dataObject = null)
         {
-            var parameters = ObjectToDictionary(paramObject);
+            var parameters = AugmentParameters(ObjectToDictionary(paramObject), dataObject);
             return AssembleUrl(parameters);
         }
 
@@ -85,9 +107,11 @@ namespace Swoogan.Resource.Url
         /// Replace the template parameters with the value from the dictionary
         /// where the key matches the name of the url template parameter
         /// </param>
+        /// <param name="dataObject"></param>
         /// <returns>Final url</returns>
-        public string BuildUrl(Dictionary<string, object> parameters)
+        public string BuildUrl(Params parameters, object dataObject)
         {
+            parameters = AugmentParameters(parameters, dataObject);
             return AssembleUrl(parameters ?? new Dictionary<string, object>());
         }
 
@@ -107,10 +131,10 @@ namespace Swoogan.Resource.Url
             return val == "/" && assembledUrl.EndsWith("/") ? "" : val;
         }
 
-        private static Dictionary<string, object> ObjectToDictionary(object paramObject)
+        private static Params ObjectToDictionary(object paramObject)
         {
             if (paramObject == null)
-                return new Dictionary<string, object>();
+                return new Params();
 
             var properties = paramObject.GetType().GetProperties().Where(p => p.CanRead);
             return properties.ToDictionary(x => x.Name, y => y.GetValue(paramObject));
@@ -135,7 +159,7 @@ namespace Swoogan.Resource.Url
                         return HttpUtility.UrlEncode(paramValue.ToString());
                     }
 
-                    if (!_defaultParams.TryGetValue(token.Value, out paramValue))
+                    if (!_defaultValues.TryGetValue(token.Value, out paramValue))
                         return "";
 
                     if (paramValue is string)
@@ -155,7 +179,7 @@ namespace Swoogan.Resource.Url
         /// <summary>
         /// Go through the leftover parameters and turn them into querystring values
         /// </summary>
-        private static string BuildQueryString(IEnumerable<KeyValuePair<string, object>> parameters,
+        private static string BuildQueryString(Params parameters,
             ICollection<string> usedParams)
         {
             var queryParams =
@@ -167,7 +191,7 @@ namespace Swoogan.Resource.Url
                 : "";
         }
 
-        private static string BuildQueryString(Dictionary<string, object> parameters)
+        private static string BuildQueryString(Params parameters)
         {
             var items = parameters.Select(MakeParam);
             return string.Join("&", items);

@@ -109,7 +109,6 @@ namespace Swoogan.Resource
                 request.RequestFormat = DataFormat.Json;
             }
 
-            var @params = _builder.AugmentParameters(parameters);
             var url = _builder.BuildUrl(parameters);
             _client.BaseUrl = new Uri(url);
 

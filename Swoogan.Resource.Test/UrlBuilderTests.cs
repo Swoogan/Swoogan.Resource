@@ -27,7 +27,7 @@ namespace Swoogan.Resource.Test
         public void Dictionary_Params()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId");
-            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } });
+            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
             Assert.AreEqual("/wak/1/2", url);
         }
 
@@ -99,7 +99,7 @@ namespace Swoogan.Resource.Test
         public void Dictionary_QueryString()
         {
             var builder = new UrlBuilder("/wak");
-            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } });
+            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
             Assert.AreEqual("/wak?userId=1&orderId=2", url);
         }
 
@@ -107,14 +107,14 @@ namespace Swoogan.Resource.Test
         public void Object_Both()
         {
             var builder = new UrlBuilder("/wak/:orderId");
-            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } });
+            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
             Assert.AreEqual("/wak/2?userId=1", url);
         }
 
         [TestMethod]
         public void Object_DefaultParams_Null()
         {
-            var builder = new UrlBuilder("/wak", null);
+            var builder = new UrlBuilder("/wak");
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
             Assert.AreEqual("/wak?userId=1&orderId=2", url);
         }
@@ -131,8 +131,16 @@ namespace Swoogan.Resource.Test
         public void Object_DefaultParams_From_Object()
         {
             var builder = new UrlBuilder("/wak/:userId", new { userId = "@Id" });
-            var url = builder.BuildUrl(new { Id = 1 });
+            var url = builder.BuildUrl(null, new { Id = 1 });
             Assert.AreEqual("/wak/1", url);
+        }
+
+        [TestMethod]
+        public void Object_DefaultParams_From_Object_Case_Sensitive()
+        {
+            var builder = new UrlBuilder("/wak/:userId", new { userId = "@id" });
+            var url = builder.BuildUrl(null, new { Id = 1 });
+            Assert.AreEqual("/wak/", url);
         }
 
         [TestMethod]
@@ -147,7 +155,7 @@ namespace Swoogan.Resource.Test
         public void Dictionary_DefaultParams_Null()
         {
             var builder = new UrlBuilder("/wak", null);
-            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } });
+            var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
             Assert.AreEqual("/wak?userId=1&orderId=2", url);
         }
     }
