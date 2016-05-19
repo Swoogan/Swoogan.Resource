@@ -37,7 +37,7 @@ namespace Swoogan.Resource.Test
             var response = new Mock<IRestResponse<List<Customer>>>();
             var requester = new Mock<IRequester>();
 
-            string val = string.Empty;
+            var val = string.Empty;
             requester.Setup(r => r.NewRequest(It.IsAny<string>())).Returns<string>(
                 s => { val = s; return new RestRequest(s); }
             );
@@ -46,7 +46,7 @@ namespace Swoogan.Resource.Test
             client.SetupSet(c => c.BaseUrl = It.IsAny<Uri>()).Verifiable();
 
             var res = new Resource("http://localhost/wak", null, client.Object, requester.Object);
-            var result = res.Query<Customer>(new Dictionary<string, object> { { "LastName", "Svingen" } });
+            res.Query<Customer>(new Dictionary<string, object> { { "LastName", "Svingen" } });
 
             client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));
         }

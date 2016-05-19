@@ -59,7 +59,7 @@ namespace Swoogan.Resource
         {
             var request = _requester.NewRequest();
 
-            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters, null));
 
             var response = _client.Execute<List<T>>(request);
             return response.Data;

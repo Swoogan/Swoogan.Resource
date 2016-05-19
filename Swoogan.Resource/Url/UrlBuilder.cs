@@ -29,7 +29,6 @@ namespace Swoogan.Resource.Url
             _defaultValues = ObjectToDictionary(defaultValues);
         }
 
-
         /// <summary>
         /// Create a UrlBuilder
         /// </summary>
@@ -49,42 +48,7 @@ namespace Swoogan.Resource.Url
             _urlTokens = lexer.Tokens;
             _defaultValues = defaultValues;
         }
-
-
-        private Params AugmentParameters(Params arguments, object dataObject = null)
-        {
-            if (_defaultValues == null) return arguments;
-
-            if (arguments == null)
-                arguments = new Params();
-
-            foreach (var pair in _defaultValues.Where(x => !arguments.ContainsKey(x.Key)))
-                arguments[pair.Key] = pair.Value;
-
-            var data = ObjectToDictionary(dataObject);
-            var @params = _urlTokens.Where(x => x.Type == TokenType.Parameter).Select(x => x.Value).ToList();
-
-            // Find all the default parameter values that start with '@'.
-            // Those are replaced with property values from the dataObject. 
-            // If there is a parameter in the url template replace it with
-            // the value from the dataObject as specified by the _defaultValues
-            var names = from defParam in _defaultValues
-                let propValue = defParam.Value.ToString()
-                let paramName = propValue.TrimStart('@')
-                where propValue.StartsWith("@") && @params.Contains(paramName)
-                where data.ContainsKey(paramName)
-                select paramName;
-
-            foreach (var name in names)
-                arguments[name] = data[name];
-
-            //object val;
-            //if (data.TryGetValue(paramName, out val))
-            //    arguments[paramName] = val;
-
-            return arguments;
-        }
-
+        
         /// <summary>
         /// Do parameter substitution in a URL
         /// </summary>
@@ -113,6 +77,38 @@ namespace Swoogan.Resource.Url
         {
             parameters = AugmentParameters(parameters, dataObject);
             return AssembleUrl(parameters ?? new Dictionary<string, object>());
+        }
+
+        private Params AugmentParameters(Params arguments, object dataObject = null)
+        {
+            if (_defaultValues == null) return arguments;
+
+            if (arguments == null)
+                arguments = new Params();
+
+            var data = ObjectToDictionary(dataObject);
+            var @params = _urlTokens.Where(x => x.Type == TokenType.Parameter).Select(x => x.Value).ToList();
+
+            foreach (var pair in _defaultValues.Where(x => !arguments.ContainsKey(x.Key)))
+            {
+                var propValue = pair.Value.ToString();
+                if (propValue.StartsWith("@"))
+                {
+                    // If the default parameter values starts with '@' it is replaced 
+                    // with property values from the dataObject. If there is a parameter
+                    // in the url template replace it with the value of the property in 
+                    // the dataObject as specified by the _defaultValues
+                    var name = propValue.TrimStart('@');
+                    if (@params.Contains(pair.Key) && data.ContainsKey(name))
+                        arguments[pair.Key] = data[name];
+                }
+                else
+                {
+                    arguments[pair.Key] = _defaultValues[pair.Key];
+                }
+            }
+
+            return arguments;
         }
 
         private string AssembleUrl(Params parameters)
@@ -153,22 +149,9 @@ namespace Swoogan.Resource.Url
                     return token.Value;
                 case TokenType.Parameter:
                     object paramValue;
-                    if (parameters.TryGetValue(token.Value, out paramValue))
-                    {
-                        _usedParams.Add(token.Value);
-                        return HttpUtility.UrlEncode(paramValue.ToString());
-                    }
-
-                    if (!_defaultValues.TryGetValue(token.Value, out paramValue))
+                    if (!parameters.TryGetValue(token.Value, out paramValue))
                         return "";
 
-                    if (paramValue is string)
-                    {
-                        var val = paramValue.ToString();
-                        if (val.StartsWith("@"))
-                            return HttpUtility.UrlEncode(val);
-                    }
-                        
                     _usedParams.Add(token.Value);
                     return HttpUtility.UrlEncode(paramValue.ToString());
                 default:
