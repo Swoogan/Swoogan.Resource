@@ -133,8 +133,6 @@ namespace Swoogan.Resource
             request.AddJsonBody(data);
 
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
-
-            request.AddJsonBody(data);
             return _client.Execute(request);
         }
 
@@ -144,8 +142,6 @@ namespace Swoogan.Resource
             request.AddJsonBody(data);
 
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
-
-            request.AddJsonBody(data);
             return _client.Execute(request);
         }
     }

@@ -61,6 +61,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="UpdateTests.cs" />
+    <Compile Include="ReplaceTests.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="LexerTests.cs" />
     <Compile Include="QueryTests.cs" />
