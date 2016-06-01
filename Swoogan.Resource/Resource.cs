@@ -109,7 +109,7 @@ namespace Swoogan.Resource
                 request.RequestFormat = DataFormat.Json;
             }
 
-            var url = _builder.BuildUrl(parameters);
+            var url = _builder.BuildUrl(parameters, data);
             _client.BaseUrl = new Uri(url);
 
             var response = _client.Execute(request);
@@ -121,7 +121,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.PATCH);
             request.AddJsonBody(data);
 
-            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters, data));
 
             var response = _client.Execute(request);
             return response;
@@ -132,7 +132,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.PUT);
             request.AddJsonBody(data);
 
-            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters, data));
             return _client.Execute(request);
         }
 
@@ -141,7 +141,7 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest(Method.DELETE);
             request.AddJsonBody(data);
 
-            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters, data));
             return _client.Execute(request);
         }
     }
