@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
 using Moq;
+using System.Collections.Generic;
 
 namespace Swoogan.Resource.Test
 {
@@ -33,7 +34,7 @@ namespace Swoogan.Resource.Test
             var result = res.Get<Customer>();
             Assert.IsNotNull(result);
         }
-        
+
         //[TestMethod]
         //[ExpectedException(typeof(GetException))]
         //public void Get_NotAuthorized()
