@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetException.cs" />
     <Compile Include="IRequester.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="IStaticResource.cs" />

@@ -62,6 +62,7 @@ namespace Swoogan.Resource
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters, null));
 
             var response = _client.Execute<List<T>>(request);
+            HandleErrors(response);
             return response.Data;
         }
 
@@ -70,8 +71,8 @@ namespace Swoogan.Resource
             var request = _requester.NewRequest();
 
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
-
             var response = _client.Execute<List<T>>(request);
+            HandleErrors(response);
             return response.Data;
         }
 
@@ -82,6 +83,7 @@ namespace Swoogan.Resource
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute(request);
+            HandleErrors(response);
             return SimpleJson.DeserializeObject(response.Content);
         }
 
@@ -93,7 +95,19 @@ namespace Swoogan.Resource
             _client.BaseUrl = new Uri(uriString);
 
             var response = _client.Execute<T>(request);
+            HandleErrors(response);
             return response.Data;
+        }
+
+        private static void HandleErrors(IRestResponse response)
+        {
+            if (response.ErrorException != null)
+            {
+                if (response.StatusCode != 0)
+                    throw new GetException(response.StatusDescription, response.ErrorException);
+                else
+                    throw response.ErrorException;
+            }
         }
 
         public IRestResponse Create(object data = null, object parameters = null)

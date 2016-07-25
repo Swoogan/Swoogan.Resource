@@ -22,5 +22,25 @@ namespace Swoogan.Resource.Test
 
             Assert.AreEqual(customer, result);
         }
+
+        // TODO: Make the two tests below system agnositic
+
+        [TestMethod]
+        [ExpectedException(typeof(System.Net.WebException))]
+        public void Get_BadUrl()
+        {
+            var res = new Resource("http://localhost:3456/wak");
+            var result = res.Get<Customer>();
+            Assert.IsNotNull(result);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(GetException))]
+        public void Get_NotAuthorized()
+        {
+            var res = new Resource("http://localhost/wak");
+            var result = res.Get<Customer>();
+            Assert.IsNotNull(result);
+        }
     }
 }
