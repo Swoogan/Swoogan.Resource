@@ -34,13 +34,13 @@ namespace Swoogan.Resource.Test
             Assert.IsNotNull(result);
         }
         
-        [TestMethod]
-        [ExpectedException(typeof(GetException))]
-        public void Get_NotAuthorized()
-        {
-            var res = new Resource("http://localhost/wak");
-            var result = res.Get<Customer>();
-            Assert.IsNotNull(result);
-        }
+        //[TestMethod]
+        //[ExpectedException(typeof(GetException))]
+        //public void Get_NotAuthorized()
+        //{
+        //    var res = new Resource("http://localhost/wak");
+        //    var result = res.Get<Customer>();
+        //    Assert.IsNotNull(result);
+        //}
     }
 }
