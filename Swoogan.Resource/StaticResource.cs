@@ -56,8 +56,13 @@ namespace Swoogan.Resource
             return _resource.Query<T>(parameters);
         }
 
-        public T Get(object parameters = null)
+        public IRestResponse<List<T>> QueryResponse(object parameters = null)
         {
+            return _resource.QueryResponse<T>(parameters);
+        }
+
+        public T Get(object parameters = null)
+        {            
             return _resource.Get<T>(parameters);
         }
 

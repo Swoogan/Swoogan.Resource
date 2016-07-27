@@ -8,7 +8,7 @@ namespace Swoogan.Resource.Test
     public class UpdateTests
     {
         [TestMethod]
-        public void With_Body()
+        public void Update_With_Body()
         {
             var client = new Mock<IRestClient>();
             var requester = new Mock<IRequester>();
@@ -35,7 +35,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void With_Params()
+        public void Update_With_Params()
         {
             var client = new Mock<IRestClient>();
             var requester = new Mock<IRequester>();
@@ -63,7 +63,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Without_Body()
+        public void Update_Without_Body()
         {
             var client = new Mock<IRestClient>();
             var requester = new Mock<IRequester>();

@@ -3,6 +3,7 @@ using Moq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Swoogan.Resource.Test
 {
@@ -22,6 +23,7 @@ namespace Swoogan.Resource.Test
             };
 
             response.Setup(r => r.Data).Returns(customers);
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
             var res = new Resource("http://localhost/wak", null, client.Object);
@@ -34,7 +36,10 @@ namespace Swoogan.Resource.Test
         public void TypedQuery_WithDictArgs()
         {
             var client = new Mock<IRestClient>();
+
             var response = new Mock<IRestResponse<List<Customer>>>();
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+
             var requester = new Mock<IRequester>();
 
             var val = string.Empty;
@@ -55,9 +60,11 @@ namespace Swoogan.Resource.Test
         public void TypedQuery_WithObjArgs()
         {
             var client = new Mock<IRestClient>();
+
             var response = new Mock<IRestResponse<List<Customer>>>();
-            var requester = new Mock<IRequester>();
-            
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+
+            var requester = new Mock<IRequester>();            
             requester.Setup(r => r.NewRequest()).Returns(new RestRequest());
 
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
@@ -69,7 +76,45 @@ namespace Swoogan.Resource.Test
             client.VerifySet(c => c.BaseUrl = new Uri("http://localhost/wak?LastName=Svingen"));
         }
 
- 
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TypedQuery_Failed_InternalException()
+        {
+            var client = new Mock<IRestClient>();
+
+            var response = new Mock<IRestResponse<List<Customer>>>();
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Error);
+            response.Setup(r => r.ErrorException).Returns(new Exception("ERROR"));
+
+            var requester = new Mock<IRequester>();
+            requester.Setup(r => r.NewRequest()).Returns(new RestRequest());
+
+            client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
+
+            var res = new Resource("http://localhost/wak", null, client.Object, requester.Object);
+            res.Query<Customer>();            
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(GetException))]
+        public void TypedQuery_Failed_StatusCode()
+        {
+            var client = new Mock<IRestClient>();
+
+            var response = new Mock<IRestResponse<List<Customer>>>();
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Error);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.BadRequest);
+
+            var requester = new Mock<IRequester>();
+            requester.Setup(r => r.NewRequest()).Returns(new RestRequest());
+
+            client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
+
+            var res = new Resource("http://localhost/wak", null, client.Object, requester.Object);
+            res.Query<Customer>();
+        }
+
+
         /*
 
                 [TestMethod]

@@ -16,6 +16,7 @@ namespace Swoogan.Resource.Test
             var customer = new Customer { Id = 1, FirstName = "Colin", LastName = "Svingen" };
 
             response.Setup(r => r.Data).Returns(customer);
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
             var res = new Resource("http://localhost/wak", null, client.Object);

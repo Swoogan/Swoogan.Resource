@@ -8,7 +8,7 @@ namespace Swoogan.Resource.Test
     public class UrlBuilderTests
     {
         [TestMethod]
-        public void Basic_Url()
+        public void UrlBuilder_Basic_Url()
         {
             var builder = new UrlBuilder("http://localhost:9000");
             var url = builder.BuildUrl(null);
@@ -16,7 +16,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_Params()
+        public void UrlBuilder_Object_Params()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId");
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
@@ -24,7 +24,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Dictionary_Params()
+        public void UrlBuilder_Dictionary_Params()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId");
             var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
@@ -32,7 +32,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_One_Params()
+        public void UrlBuilder_Null_One_Params()
         {
             var builder = new UrlBuilder("/wak/:userId");
             var url = builder.BuildUrl(null);
@@ -40,7 +40,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_Two_Params()
+        public void UrlBuilder_Null_Two_Params()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId");
             var url = builder.BuildUrl(null);
@@ -48,7 +48,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_Two_Dotted_Params()
+        public void UrlBuilder_Null_Two_Dotted_Params()
         {
             var builder = new UrlBuilder("/wak/:userId.foo/:orderId.bar");
             var url = builder.BuildUrl(null);
@@ -56,7 +56,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Three_Parameters_With_Two_Arguments()
+        public void UrlBuilder_Three_Parameters_With_Two_Arguments()
         {
             var builder = new UrlBuilder("/wak/:a/:b/:c");
             var url = builder.BuildUrl(new { a = 1, c = 3 });
@@ -64,7 +64,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Double_Token()
+        public void UrlBuilder_Double_Token()
         {
             var builder = new UrlBuilder("/wak/:a:b");
             var url = builder.BuildUrl(new { a = 1, b = 3 });
@@ -72,7 +72,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_Url()
+        public void UrlBuilder_Null_Url()
         {
             var builder = new UrlBuilder(null);
             var url = builder.BuildUrl(null);
@@ -80,7 +80,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null_Url_With_Parameters()
+        public void UrlBuilder_Null_Url_With_Parameters()
         {
             var builder = new UrlBuilder(null);
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
@@ -88,7 +88,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_QueryString()
+        public void UrlBuilder_Object_QueryString()
         {
             var builder = new UrlBuilder("/wak");
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
@@ -96,7 +96,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Dictionary_QueryString()
+        public void UrlBuilder_Dictionary_QueryString()
         {
             var builder = new UrlBuilder("/wak");
             var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
@@ -104,7 +104,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_Both()
+        public void UrlBuilder_Object_Both()
         {
             var builder = new UrlBuilder("/wak/:orderId");
             var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);
@@ -112,7 +112,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_DefaultParams_Null()
+        public void UrlBuilder_Object_DefaultParams_Null()
         {
             var builder = new UrlBuilder("/wak");
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
@@ -120,7 +120,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_DefaultParams_Static()
+        public void UrlBuilder_Object_DefaultParams_Static()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId", new { orderId = 2 });
             var url = builder.BuildUrl(new { userId = 1 });
@@ -128,7 +128,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_DefaultParams_From_Object()
+        public void UrlBuilder_Object_DefaultParams_From_Object()
         {
             var builder = new UrlBuilder("/wak/:userId", new { userId = "@Id" });
             var url = builder.BuildUrl(null, new { Id = 1 });
@@ -136,7 +136,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_DefaultParams_From_Object_Case_Sensitive()
+        public void UrlBuilder_Object_DefaultParams_From_Object_Case_Sensitive()
         {
             var builder = new UrlBuilder("/wak/:userId", new { userId = "@id" });
             var url = builder.BuildUrl(null, new { Id = 1 });
@@ -144,7 +144,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Object_DefaultParams_Dont_Override()
+        public void UrlBuilder_Object_DefaultParams_Dont_Override()
         {
             var builder = new UrlBuilder("/wak/:userId/:orderId", new { orderId = 3 });
             var url = builder.BuildUrl(new { userId = 1, orderId = 2 });
@@ -152,7 +152,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Dictionary_DefaultParams_Null()
+        public void UrlBuilder_Dictionary_DefaultParams_Null()
         {
             var builder = new UrlBuilder("/wak", null);
             var url = builder.BuildUrl(new Dictionary<string, object> { { "userId", 1 }, { "orderId", 2 } }, null);

@@ -7,7 +7,7 @@ namespace Swoogan.Resource.Test
     public class LexerTests
     {
         [TestMethod]
-        public void Empty()
+        public void Lexer_Empty()
         {
             var lexer = new Lexer();
             lexer.Lex("");
@@ -16,7 +16,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Null()
+        public void Lexer_Null()
         {
             var lexer = new Lexer();
             lexer.Lex(null);
@@ -26,7 +26,7 @@ namespace Swoogan.Resource.Test
 
 
         [TestMethod]
-        public void Simple()
+        public void Lexer_Simple()
         {
             var lexer = new Lexer();
             lexer.Lex("/wak/");
@@ -38,7 +38,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Simple_Full()
+        public void Lexer_Simple_Full()
         {
             var lexer = new Lexer();
             lexer.Lex("http://localhost/wak");
@@ -54,7 +54,7 @@ namespace Swoogan.Resource.Test
 
 
         [TestMethod]
-        public void Simple_With_Port()
+        public void Lexer_Simple_With_Port()
         {
             var lexer = new Lexer();
             lexer.Lex("http://localhost:9000");
@@ -72,7 +72,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Two_Parameters()
+        public void Lexer_Two_Parameters()
         {
             var lexer = new Lexer();
             lexer.Lex("/wak/:userId/:orderId");
@@ -93,7 +93,7 @@ namespace Swoogan.Resource.Test
         }
         
         [TestMethod]
-        public void Two_Dotted_Parameters()
+        public void Lexer_Two_Dotted_Parameters()
         {
             var lexer = new Lexer();
             lexer.Lex("/wak/:userId.foo/:orderId.bar");
@@ -117,7 +117,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Escaped_Backslash()
+        public void Lexer_Escaped_Backslash()
         {
             var lexer = new Lexer();
             lexer.Lex(@"/wak/\\:userId");
@@ -129,7 +129,7 @@ namespace Swoogan.Resource.Test
         }
 
         [TestMethod]
-        public void Escaped_Colon()
+        public void Lexer_Escaped_Colon()
         {
             var lexer = new Lexer();
             lexer.Lex(@"/wak/\:userId");
