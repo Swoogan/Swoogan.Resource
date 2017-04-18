@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Swoogan.Resource.Url;
+using System.Net;
 
 namespace Swoogan.Resource
 {
@@ -127,7 +128,7 @@ namespace Swoogan.Resource
         {
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                if (response.StatusCode != 0)
+                if (response.StatusCode != 0 && response.StatusCode != HttpStatusCode.OK)
                     throw new GetException(response.StatusDescription, response.ErrorException);
                 else
                     throw response.ErrorException;
