@@ -126,9 +126,9 @@ namespace Swoogan.Resource
 
         private static void HandleErrors(IRestResponse response)
         {
-            if (response.ResponseStatus != ResponseStatus.Completed)
+            if (response.ResponseStatus != ResponseStatus.Completed && response.StatusCode != HttpStatusCode.OK)
             {
-                if (response.StatusCode != 0 && response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode != 0)
                     throw new GetException(response.StatusDescription, response.ErrorException);
                 else
                     throw response.ErrorException;
