@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Swoogan.Resource.Url;
 using System.Net;
+using Marvin.JsonPatch;
 
 namespace Swoogan.Resource
 {
@@ -150,6 +151,17 @@ namespace Swoogan.Resource
 
             var url = _builder.BuildUrl(parameters, data);
             _client.BaseUrl = new Uri(url);
+
+            var response = _client.Execute(request);
+            return response;
+        }
+        public IRestResponse Update<T>(JsonPatchDocument<T> patchDocument, object parameters = null) where T: class
+        {
+            var request = _requester.NewRequest(Method.PATCH);
+            request.JsonSerializer.ContentType = "application/json-patch+json";
+            request.AddJsonBody(patchDocument);
+
+            _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
             var response = _client.Execute(request);
             return response;
