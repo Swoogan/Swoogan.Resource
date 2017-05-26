@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Swoogan.Resource.Url;
 using System.Net;
 using Marvin.JsonPatch;
+using Newtonsoft.Json;
 
 namespace Swoogan.Resource
 {
@@ -135,8 +136,7 @@ namespace Swoogan.Resource
                     throw response.ErrorException;
             }
         }
-
-        public IRestResponse Create(object data = null, object parameters = null)
+ public IRestResponse Create(object data = null, object parameters = null)
         {
             var request = _requester.NewRequest(Method.POST);
 
@@ -158,7 +158,8 @@ namespace Swoogan.Resource
         public IRestResponse Update<T>(JsonPatchDocument<T> patchDocument, object parameters = null) where T: class
         {
             var request = _requester.NewRequest(Method.PATCH);
-            request.AddJsonBody(patchDocument);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddBody(JsonConvert.SerializeObject(patchDocument));
 
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
