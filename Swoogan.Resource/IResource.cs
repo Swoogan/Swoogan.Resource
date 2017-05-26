@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using RestSharp;
+using Marvin.JsonPatch;
 
 namespace Swoogan.Resource
 {
@@ -14,5 +15,6 @@ namespace Swoogan.Resource
         IRestResponse Remove(object parameters = null, object data = null);
         IRestResponse Replace(object data = null, object parameters = null);
         IRestResponse Update(object data = null, object parameters = null);
+        IRestResponse Update<T>(JsonPatchDocument<T> patchDocument, object parameters = null) where T : class;
     }
 }
