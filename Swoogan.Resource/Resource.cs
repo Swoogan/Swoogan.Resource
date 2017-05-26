@@ -158,8 +158,7 @@ namespace Swoogan.Resource
         public IRestResponse Update<T>(JsonPatchDocument<T> patchDocument, object parameters = null) where T: class
         {
             var request = _requester.NewRequest(Method.PATCH);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddBody(JsonConvert.SerializeObject(patchDocument));
+            request.AddParameter("application/json", JsonConvert.SerializeObject(patchDocument), ParameterType.RequestBody);
 
             _client.BaseUrl = new Uri(_builder.BuildUrl(parameters));
 
