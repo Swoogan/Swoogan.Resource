@@ -135,6 +135,11 @@ namespace Swoogan.Resource
                 else
                     throw response.ErrorException;
             }
+            else if (response.ResponseStatus == ResponseStatus.Completed && response.StatusCode != HttpStatusCode.OK)
+            {
+                if (response.StatusCode != HttpStatusCode.Unauthorized)
+                    throw new GetException(response.StatusDescription);
+            }
         }
  public IRestResponse Create(object data = null, object parameters = null)
         {
