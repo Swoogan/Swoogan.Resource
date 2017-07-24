@@ -24,6 +24,7 @@ namespace Swoogan.Resource.Test
 
             response.Setup(r => r.Data).Returns(customers);
             response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.OK);
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
             var res = new Resource("http://localhost/wak", null, client.Object);
@@ -39,6 +40,7 @@ namespace Swoogan.Resource.Test
 
             var response = new Mock<IRestResponse<List<Customer>>>();
             response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.OK);
 
             var requester = new Mock<IRequester>();
 
@@ -63,6 +65,7 @@ namespace Swoogan.Resource.Test
 
             var response = new Mock<IRestResponse<List<Customer>>>();
             response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.OK);
 
             var requester = new Mock<IRequester>();            
             requester.Setup(r => r.NewRequest()).Returns(new RestRequest());

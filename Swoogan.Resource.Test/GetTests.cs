@@ -18,6 +18,7 @@ namespace Swoogan.Resource.Test
 
             response.Setup(r => r.Data).Returns(customer);
             response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.OK);
             client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
             var res = new Resource("http://localhost/wak", null, client.Object);
@@ -89,13 +90,20 @@ namespace Swoogan.Resource.Test
             Assert.IsNotNull(result);
         }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(GetException))]
-        //public void Get_NotAuthorized()
-        //{
-        //    var res = new Resource("http://localhost/wak");
-        //    var result = res.Get<Customer>();
-        //    Assert.IsNotNull(result);
-        //}
+        [TestMethod]
+        [ExpectedException(typeof(GetException))]
+        public void Get_NotAuthorized()
+        {
+            var client = new Mock<IRestClient>();
+            var response = new Mock<IRestResponse<Customer>>();
+            response.Setup(r => r.Data).Returns<Customer>(null);
+            response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.Unauthorized);
+            client.Setup(c => c.Execute<Customer>(It.IsAny<IRestRequest>())).Returns(response.Object);
+
+            var res = new Resource("http://localhost/wak", null, client.Object);
+            var result = res.Get<Customer>();
+            Assert.IsNull(result);
+        }
     }
 }

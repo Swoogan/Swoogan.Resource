@@ -137,7 +137,7 @@ namespace Swoogan.Resource
             }
             else if (response.ResponseStatus == ResponseStatus.Completed && response.StatusCode != HttpStatusCode.OK)
             {
-                if (response.StatusCode != HttpStatusCode.Unauthorized)
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
                     throw new GetException(response.StatusDescription);
             }
         }

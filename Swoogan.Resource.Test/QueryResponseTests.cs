@@ -3,6 +3,7 @@ using Moq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Swoogan.Resource.Test
 {
@@ -23,6 +24,7 @@ namespace Swoogan.Resource.Test
 
             response.Setup(r => r.Data).Returns(customers);
             response.Setup(r => r.ResponseStatus).Returns(ResponseStatus.Completed);
+            response.Setup(r => r.StatusCode).Returns(HttpStatusCode.OK);
             client.Setup(c => c.Execute<List<Customer>>(It.IsAny<IRestRequest>())).Returns(response.Object);
 
             var res = new Resource("http://localhost/wak", null, client.Object);
