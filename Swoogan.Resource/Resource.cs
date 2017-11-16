@@ -97,7 +97,7 @@ namespace Swoogan.Resource
 
             var response = _client.Execute(request);
             HandleErrors(response);
-            return SimpleJson.DeserializeObject(response.Content);
+            return SimpleJson.SimpleJson.DeserializeObject(response.Content);
         }
 
      

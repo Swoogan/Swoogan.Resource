@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RestSharp.Extensions.MonoHttp;
+using System.Web;
 using Params = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Swoogan.Resource.Url
