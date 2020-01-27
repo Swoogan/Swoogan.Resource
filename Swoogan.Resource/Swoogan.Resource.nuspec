@@ -9,7 +9,8 @@
     <projectUrl>https://github.com/Swoogan/Swoogan.Resource</projectUrl>
     <licenseUrl>https://github.com/Swoogan/Swoogan.Resource/blob/master/LICENSE</licenseUrl>
     <dependencies>
-      <dependency id="RestSharp" version="105.2.3" />
+      <dependency id="RestSharp" version="106.0" />
+      <dependency id="Marvin.JsonPatch" version="2.1" />
     </dependencies>
   </metadata>
   <files>
