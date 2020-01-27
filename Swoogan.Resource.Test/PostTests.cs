@@ -28,10 +28,12 @@ namespace Swoogan.Resource.Test
 
             Assert.AreEqual(DataFormat.Json, request.RequestFormat);
             Assert.AreEqual(1, request.Parameters.Count);
-            Assert.AreEqual(null, request.Parameters[0].ContentType);
-            Assert.AreEqual("application/json", request.Parameters[0].Name);
+            Assert.AreEqual("application/json", request.Parameters[0].ContentType);
+            Assert.AreEqual("", request.Parameters[0].Name);
             Assert.AreEqual(ParameterType.RequestBody, request.Parameters[0].Type);
-            Assert.AreEqual("{\"Id\":1,\"FirstName\":\"Colin\",\"LastName\":\"Svingen\"}", request.Parameters[0].Value);
+            Assert.IsTrue(request.Parameters[0].Value is Customer);
+            Assert.AreEqual(customer, request.Parameters[0].Value);
+
         }
 
         [TestMethod]
@@ -56,10 +58,10 @@ namespace Swoogan.Resource.Test
             Assert.AreEqual(Method.POST, request.Method);
             Assert.AreEqual(DataFormat.Json, request.RequestFormat);
             Assert.AreEqual(1, request.Parameters.Count);
-            Assert.AreEqual(null, request.Parameters[0].ContentType);
-            Assert.AreEqual("application/json", request.Parameters[0].Name);
+            Assert.AreEqual("application/json", request.Parameters[0].ContentType);
             Assert.AreEqual(ParameterType.RequestBody, request.Parameters[0].Type);
-            Assert.AreEqual("{\"Id\":1,\"FirstName\":\"Colin\",\"LastName\":\"Svingen\"}", request.Parameters[0].Value);
+            Assert.IsTrue(request.Parameters[0].Value is Customer);
+            Assert.AreEqual(customer, request.Parameters[0].Value);
         }
 
         [TestMethod]
